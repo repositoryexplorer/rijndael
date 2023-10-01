@@ -1,5 +1,7 @@
 package com.alfanet.aes;
 
+import static com.alfanet.aes.AesUtils.StateWords;
+
 public class SBox {
     private static final int[] box = {
             0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -42,5 +44,25 @@ public class SBox {
 
     public static byte invSubBytes(byte inByte) {
         return (byte) invBox[inByte & 0xFF];
+    }
+
+    public static byte[][] subStateBytes(byte[][] state) {
+        byte[][] result = new byte[4][StateWords];
+        for (int i = 0; i < 4; i++) {
+            for (int col = 0; col < StateWords; col++) {
+                result[i][col] = subBytes(state[i][col]);
+            }
+        }
+        return result;
+    }
+
+    public static byte[][] invSubStateBytes(byte[][] state) {
+        byte[][] result = new byte[4][StateWords];
+        for (int i = 0; i < 4; i++) {
+            for (int col = 0; col < StateWords; col++) {
+                result[i][col] = invSubBytes(state[i][col]);
+            }
+        }
+        return result;
     }
 }

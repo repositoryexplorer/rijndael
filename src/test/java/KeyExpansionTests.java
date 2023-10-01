@@ -3,6 +3,9 @@ import com.alfanet.utils.InputLengthException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static com.alfanet.aes.KeyExpansion.allKeysToRoundKeysByteArray;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 public class KeyExpansionTests {
@@ -46,4 +49,124 @@ public class KeyExpansionTests {
         }
     }
 
+    @Test
+    public void testKey16() {
+        byte[] key = {
+                (byte) 0x2b, (byte) 0x7e, (byte) 0x15, (byte) 0x16,
+                (byte) 0x28, (byte) 0xae, (byte) 0xd2, (byte) 0xa6,
+                (byte) 0xab, (byte) 0xf7, (byte) 0x15, (byte) 0x88,
+                (byte) 0x09, (byte) 0xcf, (byte) 0x4f, (byte) 0x3c
+        };
+
+        int[] reference = {
+                0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x9cf4f3c,
+                0xa0fafe17, 0x88542cb1, 0x23a33939, 0x2a6c7605,
+                0xf2c295f2, 0x7a96b943, 0x5935807a, 0x7359f67f,
+                0x3d80477d, 0x4716fe3e, 0x1e237e44, 0x6d7a883b,
+                0xef44a541, 0xa8525b7f, 0xb671253b, 0xdb0bad00, //4
+                0xd4d1c6f8, 0x7c839d87, 0xcaf2b8bc, 0x11f915bc,
+                0x6d88a37a, 0x110b3efd, 0xdbf98641, 0xca0093fd,
+                0x4e54f70e, 0x5f5fc9f3, 0x84a64fb2, 0x4ea6dc4f,
+                0xead27321, 0xb58dbad2, 0x312bf560, 0x7f8d292f,
+                0xac7766f3, 0x19fadc21, 0x28d12941, 0x575c006e,
+                0xd014f9a8, 0xc9ee2589, 0xe13f0cc8, 0xb6630ca6
+        };
+
+        byte[][] round10Key = {
+                {(byte) 0xd0, (byte) 0xc9, (byte) 0xe1, (byte) 0xb6},
+                {(byte) 0x14, (byte) 0xee, (byte) 0x3f, (byte) 0x63},
+                {(byte) 0xf9, (byte) 0x25, (byte) 0x0c, (byte) 0x0c},
+                {(byte) 0xa8, (byte) 0x89, (byte) 0xc8, (byte) 0xa6}
+        };
+
+        byte[][] round9Key = {
+                {(byte) 0xac, (byte) 0x19, (byte) 0x28, (byte) 0x57},
+                {(byte) 0x77, (byte) 0xfa, (byte) 0xd1, (byte) 0x5c},
+                {(byte) 0x66, (byte) 0xdc, (byte) 0x29, (byte) 0x00},
+                {(byte) 0xf3, (byte) 0x21, (byte) 0x41, (byte) 0x6e}
+        };
+
+        byte[][] round8Key = {
+                {(byte) 0xea, (byte) 0xb5, (byte) 0x31, (byte) 0x7f},
+                {(byte) 0xd2, (byte) 0x8d, (byte) 0x2b, (byte) 0x8d},
+                {(byte) 0x73, (byte) 0xba, (byte) 0xf5, (byte) 0x29},
+                {(byte) 0x21, (byte) 0xd2, (byte) 0x60, (byte) 0x2f}
+        };
+
+        byte[][] round7Key = {
+                {(byte) 0x4e, (byte) 0x5f, (byte) 0x84, (byte) 0x4e},
+                {(byte) 0x54, (byte) 0x5f, (byte) 0xa6, (byte) 0xa6},
+                {(byte) 0xf7, (byte) 0xc9, (byte) 0x4f, (byte) 0xdc},
+                {(byte) 0x0e, (byte) 0xf3, (byte) 0xb2, (byte) 0x4f}
+        };
+
+        byte[][] round6Key = {
+                {(byte) 0x6d, (byte) 0x11, (byte) 0xdb, (byte) 0xca},
+                {(byte) 0x88, (byte) 0x0b, (byte) 0xf9, (byte) 0x00},
+                {(byte) 0xa3, (byte) 0x3e, (byte) 0x86, (byte) 0x93},
+                {(byte) 0x7a, (byte) 0xfd, (byte) 0x41, (byte) 0xfd}
+        };
+
+        byte[][] round5Key = {
+                {(byte) 0xd4, (byte) 0x7c, (byte) 0xca, (byte) 0x11},
+                {(byte) 0xd1, (byte) 0x83, (byte) 0xf2, (byte) 0xf9},
+                {(byte) 0xc6, (byte) 0x9d, (byte) 0xb8, (byte) 0x15},
+                {(byte) 0xf8, (byte) 0x87, (byte) 0xbc, (byte) 0xbc}
+        };
+
+        byte[][] round4Key = {
+                {(byte) 0xef, (byte) 0xa8, (byte) 0xb6, (byte) 0xdb},
+                {(byte) 0x44, (byte) 0x52, (byte) 0x71, (byte) 0x0b},
+                {(byte) 0xa5, (byte) 0x5b, (byte) 0x25, (byte) 0xad},
+                {(byte) 0x41, (byte) 0x7f, (byte) 0x3b, (byte) 0x00}
+        };
+
+        byte[][] round3Key = {
+                {(byte) 0x3d, (byte) 0x47, (byte) 0x1e, (byte) 0x6d},
+                {(byte) 0x80, (byte) 0x16, (byte) 0x23, (byte) 0x7a},
+                {(byte) 0x47, (byte) 0xfe, (byte) 0x7e, (byte) 0x88},
+                {(byte) 0x7d, (byte) 0x3e, (byte) 0x44, (byte) 0x3b}
+        };
+
+        byte[][] round2Key = {
+                {(byte) 0xf2, (byte) 0x7a, (byte) 0x59, (byte) 0x73},
+                {(byte) 0xc2, (byte) 0x96, (byte) 0x35, (byte) 0x59},
+                {(byte) 0x95, (byte) 0xb9, (byte) 0x80, (byte) 0xf6},
+                {(byte) 0xf2, (byte) 0x43, (byte) 0x7a, (byte) 0x7f}
+        };
+
+        byte[][] round1Key = {
+                {(byte) 0xa0, (byte) 0x88, (byte) 0x23, (byte) 0x2a},
+                {(byte) 0xfa, (byte) 0x54, (byte) 0xa3, (byte) 0x6c},
+                {(byte) 0xfe, (byte) 0x2c, (byte) 0x39, (byte) 0x76},
+                {(byte) 0x17, (byte) 0xb1, (byte) 0x39, (byte) 0x05}
+        };
+
+        byte[][] round0Key = {
+                {(byte) 0x2b, (byte) 0x28, (byte) 0xab, (byte) 0x09},
+                {(byte) 0x7e, (byte) 0xae, (byte) 0xf7, (byte) 0xcf},
+                {(byte) 0x15, (byte) 0xd2, (byte) 0x15, (byte) 0x4f},
+                {(byte) 0x16, (byte) 0xa6, (byte) 0x88, (byte) 0x3c}
+        };
+
+        try {
+            int[] keys = KeyExpansion.expandKey(key, 10);
+            Assertions.assertArrayEquals(reference, keys);
+            List<byte[][]> listOfArraysOfKeys = allKeysToRoundKeysByteArray(keys);
+            Assertions.assertEquals(11, listOfArraysOfKeys.size());
+            Assertions.assertArrayEquals(round0Key, listOfArraysOfKeys.get(0));
+            Assertions.assertArrayEquals(round1Key, listOfArraysOfKeys.get(1));
+            Assertions.assertArrayEquals(round2Key, listOfArraysOfKeys.get(2));
+            Assertions.assertArrayEquals(round3Key, listOfArraysOfKeys.get(3));
+            Assertions.assertArrayEquals(round4Key, listOfArraysOfKeys.get(4));
+            Assertions.assertArrayEquals(round5Key, listOfArraysOfKeys.get(5));
+            Assertions.assertArrayEquals(round6Key, listOfArraysOfKeys.get(6));
+            Assertions.assertArrayEquals(round7Key, listOfArraysOfKeys.get(7));
+            Assertions.assertArrayEquals(round8Key, listOfArraysOfKeys.get(8));
+            Assertions.assertArrayEquals(round9Key, listOfArraysOfKeys.get(9));
+            Assertions.assertArrayEquals(round10Key, listOfArraysOfKeys.get(10));
+        } catch (InputLengthException e) {
+            fail(e.getMessage());
+        }
+    }
 }

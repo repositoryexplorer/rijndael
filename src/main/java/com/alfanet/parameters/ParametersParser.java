@@ -1,6 +1,10 @@
 package com.alfanet.parameters;
 
+import com.alfanet.aes.AESInput;
+import com.alfanet.aes.AESMode;
+import com.alfanet.aes.CipherOperation;
 import com.alfanet.fileutils.FileUtils;
+import com.alfanet.utils.Utils;
 import lombok.Getter;
 import org.springframework.boot.ApplicationArguments;
 
@@ -10,20 +14,20 @@ import java.util.Optional;
 @Getter
 public class ParametersParser {
 
-    public enum Operation {ENCRYPT, DECRYPT}
-
-    ;
-
     private String keyFilePath;
     private String inputFilePath;
+    private String outputFilePath;
 
-    private Operation operation;
+    private CipherOperation operation;
     private byte[] keyBytes;
+    private AESMode aesMode;
+    private byte[] initVector;
 
     public boolean parseArguments(ApplicationArguments params) {
         Optional<String> keyFileParam = getFileValue(params.getOptionValues("k"));
         Optional<String> inputFileParam = getFileValue(params.getOptionValues("i"));
-        if (keyFileParam.isPresent() && inputFileParam.isPresent()) {
+        Optional<String> outputFileParam = getFileValue(params.getOptionValues("o"));
+        if (keyFileParam.isPresent() && inputFileParam.isPresent() && outputFileParam.isPresent()) {
             keyFilePath = keyFileParam.get();
             try {
                 keyBytes = FileUtils.readKey(keyFilePath);
@@ -34,6 +38,14 @@ public class ParametersParser {
             }
             inputFilePath = inputFileParam.get();
             operation = getOperationParam(params.containsOption("d"));
+            outputFilePath = outputFileParam.get();
+            aesMode = getModeParam(params.getOptionValues("m"));
+            try {
+                initVector = getInitVectorParam(getStringValue(params.getOptionValues("iv")), aesMode);
+            } catch (Exception e) {
+                printHelp();
+                return false;
+            }
         } else {
             printHelp();
             return false;
@@ -41,8 +53,29 @@ public class ParametersParser {
         return true;
     }
 
-    private Operation getOperationParam(boolean isDecryptOption) {
-        return isDecryptOption ? Operation.DECRYPT : Operation.ENCRYPT;
+    private byte[] getInitVectorParam(Optional<String> initVectorParam, AESMode aesMode) throws InitializationVectorSizeException, InitializationVectorMissingException {
+        if (aesMode != AESMode.CBC) return new byte[0];
+
+        if (initVectorParam.isPresent()) {
+            String tmp = initVectorParam.get();
+            if (tmp.length() != 32) {
+                throw new InitializationVectorSizeException("Wrong IV size, expected: 16, actual: " + tmp.length());
+            }
+            return Utils.asciiHexBytesToByteArray(initVectorParam.get());
+        } else throw new InitializationVectorMissingException();
+    }
+
+    private AESMode getModeParam(List<String> mode) {
+        Optional<String> modeOpt = getStringValue(mode);
+        if (modeOpt.isPresent()) {
+            return AESMode.valueOf(modeOpt.get().toUpperCase());
+        } else {
+            return AESMode.CBC;
+        }
+    }
+
+    private CipherOperation getOperationParam(boolean isDecryptOption) {
+        return isDecryptOption ? CipherOperation.DECRYPTION : CipherOperation.ENCRYPTION;
     }
 
     private Optional<String> getStringValue(List<String> paramValues) {
@@ -62,13 +95,21 @@ public class ParametersParser {
         System.out.println("Usage:");
         System.out.println(" java -jar rijndael.jar [options]");
         System.out.println("Encrypts/decrypts input file using Rijndael(AES) algorithm.");
+        System.out.println("It uses PKCS#7 padding for blocks smaller than 16 bytes");
         System.out.println("Options");
         System.out.println(" --k      file with private secret key (Hexadecimal digits only allowed. Supported key lengths are: 128, 192, 256)");
         System.out.println(" --i      input file to be encrypted/decrypted");
         System.out.println(" --d      decrypt file content, if omit the default behaviour is encrypt");
+        System.out.println(" --m      mode, ECB or CBC");
+        System.out.println(" --o      output file");
+        System.out.println(" --iv     16 bytes length initialization vector (only for CBC mode). This must be string containing only hexadecimal values. ");
         System.out.println("\n");
         System.out.println("Example usage");
-        System.out.println(" java -jar rijndael.jar --k=key --i=inputfile");
-        System.out.println(" java -jar rijndael.jar --k=key --k=encryptedfile --d");
+        System.out.println(" java -jar rijndael.jar --k=key --i=inputfile --m=ecb --o=outputfile");
+        System.out.println(" java -jar rijndael.jar --k=key --i=encryptedfile --m=cbc --d --o=outputfile --iv=000102030405060708090a0b0c0d0e0f");
+    }
+
+    public AESInput toAESInput() {
+        return new AESInput(inputFilePath, outputFilePath, keyBytes, operation, aesMode, initVector);
     }
 }

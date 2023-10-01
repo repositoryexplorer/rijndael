@@ -4,10 +4,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Utils {
-    public static byte[] hexStringToByteArray(String s) {
+    public static byte[] asciiHexBytesToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
+        for (int i = 0; i < len - 1; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
                     + Character.digit(s.charAt(i + 1), 16));
         }
@@ -36,5 +36,26 @@ public class Utils {
         buffer.putInt(input);
         buffer.order(ByteOrder.BIG_ENDIAN);
         return buffer.array();
+    }
+
+    public static void printMultiBytes(byte[][] bytes) {
+        String result = "";
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                result += String.format("%02x", bytes[j][i]);
+            }
+        }
+        System.out.println(result);
+    }
+
+    public static byte[] asciiHexBytesToByteArray(byte[] allBytes) {
+        int len = allBytes.length / 2;
+        byte[] data = new byte[len];
+        for (int i = 0; i < allBytes.length - 1; i += 2) {
+            int a = Character.digit(allBytes[i], 16) * 16;
+            int b = Character.digit(allBytes[i + 1], 16);
+            data[i / 2] = (byte) (a + b);
+        }
+        return data;
     }
 }

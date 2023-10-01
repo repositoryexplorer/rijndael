@@ -1,0 +1,3 @@
+AES works in 2 modes - CBC and ECB mode.
+CBC (Cipher Block Chaining) requires Initialization Vector(IV) to make each message unique.Using IV we randomize the encryption of similar blocks. So any identical plain text blocks will be encrypted into disimmilar cipher text blocks
+ECB(Electronic Code Book) encryption mode does not need the IV for encryption. The input plain text will be divided into blocks and each block will be encrypted with the key provided and hence identical plain text blocks are encrypted into identical cipher text blocks

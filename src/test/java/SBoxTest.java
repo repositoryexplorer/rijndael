@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SBoxTest {
-
     @Test
     public void SBoxTest() {
         Assertions.assertEquals(SBox.subBytes((byte) 15), (byte) 0x76);

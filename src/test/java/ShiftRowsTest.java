@@ -27,4 +27,25 @@ public class ShiftRowsTest {
         Assertions.assertArrayEquals(row2, state[2]);
         Assertions.assertArrayEquals(row3, state[3]);
     }
+
+    @Test
+    public void invShiftRowsTest() {
+        final byte[] row0 = {0, 1, 2, 3};
+        final byte[] row1 = {7, 4, 5, 6};
+        final byte[] row2 = {10, 11, 8, 9};
+        final byte[] row3 = {13, 14, 15, 12};
+
+        byte[][] state = new byte[4][StateWords];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < StateWords; j++) {
+                state[i][j] = (byte) (i * StateWords + j);
+            }
+        }
+        ShiftRows.invShiftRows(state);
+
+        Assertions.assertArrayEquals(row0, state[0]);
+        Assertions.assertArrayEquals(row1, state[1]);
+        Assertions.assertArrayEquals(row2, state[2]);
+        Assertions.assertArrayEquals(row3, state[3]);
+    }
 }
