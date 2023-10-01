@@ -40,7 +40,6 @@ public class EncryptDecryptFileIntegrationTest {
 
             Assertions.assertNotNull(data);
             Assertions.assertTrue(data.length > 0);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
             fs = new FileInputStream("./src/test/resources/ecb_16_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -90,7 +89,6 @@ public class EncryptDecryptFileIntegrationTest {
 
             Assertions.assertNotNull(data);
             Assertions.assertTrue(data.length > 0);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
             fs = new FileInputStream("./src/test/resources/cbc_16_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -139,8 +137,6 @@ public class EncryptDecryptFileIntegrationTest {
             fs.close();
 
             Assertions.assertNotNull(data);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
-            // large_cbc_16_encrypted_hex
             fs = new FileInputStream("./src/test/resources/large_cbc_16_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -188,8 +184,6 @@ public class EncryptDecryptFileIntegrationTest {
             FileInputStream fs = new FileInputStream(outputFilePath);
             byte[] outputData = fs.readAllBytes();
             fs.close();
-            System.out.println(Utils.bytesToString(outputData) + " <-------------");
-
             Assertions.assertNotNull(outputData);
             fs = new FileInputStream("./src/test/resources/large_ecb_16_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
@@ -242,7 +236,6 @@ public class EncryptDecryptFileIntegrationTest {
 
             Assertions.assertNotNull(data);
             Assertions.assertTrue(data.length > 0);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
             fs = new FileInputStream("./src/test/resources/ecb_24_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -292,7 +285,6 @@ public class EncryptDecryptFileIntegrationTest {
 
             Assertions.assertNotNull(data);
             Assertions.assertTrue(data.length > 0);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
             fs = new FileInputStream("./src/test/resources/cbc_24_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -341,8 +333,6 @@ public class EncryptDecryptFileIntegrationTest {
             fs.close();
 
             Assertions.assertNotNull(data);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
-            // large_cbc_16_encrypted_hex
             fs = new FileInputStream("./src/test/resources/large_cbc_24_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();
@@ -392,8 +382,6 @@ public class EncryptDecryptFileIntegrationTest {
             fs.close();
 
             Assertions.assertNotNull(data);
-            System.out.println(Utils.bytesToString(data) + " <-------------");
-            // large_cbc_16_encrypted_hex
             fs = new FileInputStream("./src/test/resources/large_cbc_32_encrypted_hex");
             byte[] allBytes = fs.readAllBytes();
             fs.close();

@@ -13,7 +13,6 @@ public class DecryptionECBProcessor implements DecryptionProcessor {
 
     @Override
     public byte[] decryptData(byte[] data) throws InputLengthException {
-        System.out.println("decrypt ecb data len " + data.length);
         AesUtils aes = new AesUtils();
         return aes.decrypt(key, data);
     }

@@ -38,83 +38,30 @@ public class AesUtils {
     private byte[] decrypt(List<byte[][]> keys, int roundNum, byte[][] state) {
         Collections.reverse(keys);
         byte[][] k = keys.get(0);
-//        System.out.println("Klucz 0");
-//        Utils.printMultiBytes(k);
-//        System.out.println("Plain multi:");
-//        Utils.printMultiBytes(state);
         state = AddRoundKey.addRoundKey(state, keys.get(0));
-//        System.out.println("Added 0 key:");
-//        Utils.printMultiBytes(state);
-
         for (int i = 0; i < roundNum; i++) {
-
-//            System.out.println("start [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             state = ShiftRows.invShiftRows(state);
-//            System.out.println("shiftrows [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             state = SBox.invSubStateBytes(state);
-//            System.out.println("subbytes [" + i + "]");
-//            Utils.printMultiBytes(state);
-
-
             state = AddRoundKey.addRoundKey(state, keys.get(i + 1));
-//            System.out.println("Key in for[" + i + "]");
-//            Utils.printMultiBytes(keys.get(i + 1));
-//            System.out.println("key added [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             if (i != roundNum - 1) {
                 state = MixColumns.invMixColumns(state); // in last round we don't mix columns
-//                System.out.println("mixed [" + i + "]");
-//                Utils.printMultiBytes(state);
             }
-
-
         }
-
         return InputBlockUtils.stateToOutput(state);
     }
 
 
     private byte[] encrypt(List<byte[][]> keys, int roundNum, byte[][] state) {
         byte[][] k = keys.get(0);
-//        System.out.println("Klucz 0");
-//        Utils.printMultiBytes(k);
-//        System.out.println("Plain multi:");
-//        Utils.printMultiBytes(state);
         state = AddRoundKey.addRoundKey(state, keys.get(0));
-//        System.out.println("Added 0 key:");
-//        Utils.printMultiBytes(state);
-
         for (int i = 0; i < roundNum; i++) {
-
-//            System.out.println("start [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             state = SBox.subStateBytes(state);
-//            System.out.println("subbytes [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             state = ShiftRows.shiftRows(state);
-//            System.out.println("shiftrows [" + i + "]");
-//            Utils.printMultiBytes(state);
-
             if (i != roundNum - 1) {
                 state = MixColumns.mixColumns(state); // in last round we don't mix columns
-//                System.out.println("mixed [" + i + "]");
-//                Utils.printMultiBytes(state);
             }
-
             state = AddRoundKey.addRoundKey(state, keys.get(i + 1));
-//            System.out.println("Key in for[" + i + "]");
-//            Utils.printMultiBytes(keys.get(i + 1));
-//            System.out.println("key added [" + i + "]");
-//            Utils.printMultiBytes(state);
         }
-
         return InputBlockUtils.stateToOutput(state);
     }
 
