@@ -58,4 +58,8 @@ public class Utils {
         }
         return data;
     }
+
+    public static void debugPrint(boolean debugMode, String string) {
+        if (debugMode) System.out.println(string);
+    }
 }

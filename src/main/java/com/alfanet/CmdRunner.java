@@ -1,5 +1,6 @@
 package com.alfanet;
 
+import com.alfanet.aes.CipherOperation;
 import com.alfanet.fileutils.FileUtils;
 import com.alfanet.parameters.ParametersParser;
 import org.springframework.boot.ApplicationArguments;
@@ -14,7 +15,11 @@ public class CmdRunner implements ApplicationRunner {
         if (!params.parseArguments(args)) {
             System.exit(0);
         } else {
-            FileUtils.processFileEncrypt(params.toAESInput());
+            if (params.getOperation() == CipherOperation.ENCRYPTION) {
+                FileUtils.processFileEncrypt(params.toAESInput());
+            } else {
+                FileUtils.processFileDecrypt(params.toAESInput());
+            }
         }
     }
 }

@@ -22,6 +22,7 @@ public class ParametersParser {
     private byte[] keyBytes;
     private AESMode aesMode;
     private byte[] initVector;
+    private boolean verbose;
 
     public boolean parseArguments(ApplicationArguments params) {
         Optional<String> keyFileParam = getFileValue(params.getOptionValues("k"));
@@ -32,7 +33,7 @@ public class ParametersParser {
             try {
                 keyBytes = FileUtils.readKey(keyFilePath);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Error while reading key bytes: " + e.getMessage());
                 printHelp();
                 System.exit(0);
             }
@@ -40,13 +41,16 @@ public class ParametersParser {
             operation = getOperationParam(params.containsOption("d"));
             outputFilePath = outputFileParam.get();
             aesMode = getModeParam(params.getOptionValues("m"));
+            verbose = params.containsOption("v");
             try {
                 initVector = getInitVectorParam(getStringValue(params.getOptionValues("iv")), aesMode);
             } catch (Exception e) {
+                System.out.println("Initialization vector failed: " + e.getMessage());
                 printHelp();
                 return false;
             }
         } else {
+            System.out.println("Input file, key file or output file is empty");
             printHelp();
             return false;
         }
@@ -67,11 +71,7 @@ public class ParametersParser {
 
     private AESMode getModeParam(List<String> mode) {
         Optional<String> modeOpt = getStringValue(mode);
-        if (modeOpt.isPresent()) {
-            return AESMode.valueOf(modeOpt.get().toUpperCase());
-        } else {
-            return AESMode.CBC;
-        }
+        return modeOpt.map(s -> AESMode.valueOf(s.toUpperCase())).orElse(AESMode.CBC);
     }
 
     private CipherOperation getOperationParam(boolean isDecryptOption) {
@@ -79,16 +79,13 @@ public class ParametersParser {
     }
 
     private Optional<String> getStringValue(List<String> paramValues) {
-        if (paramValues != null && paramValues.size() > 0) {
+        if (paramValues != null && !paramValues.isEmpty()) {
             return Optional.of(paramValues.get(0));
         } else return Optional.empty();
     }
 
     private Optional<String> getFileValue(List<String> paramValues) {
-        Optional<String> filePath = getStringValue(paramValues);
-        if (filePath.isPresent()) {
-            return filePath;
-        } else return Optional.empty();
+        return getStringValue(paramValues);
     }
 
     private void printHelp() {
@@ -103,6 +100,7 @@ public class ParametersParser {
         System.out.println(" --m      mode, ECB or CBC");
         System.out.println(" --o      output file");
         System.out.println(" --iv     16 bytes length initialization vector (only for CBC mode). This must be string containing only hexadecimal values. ");
+        System.out.println(" --v      verbose mode");
         System.out.println("\n");
         System.out.println("Example usage");
         System.out.println(" java -jar rijndael.jar --k=key --i=inputfile --m=ecb --o=outputfile");
@@ -110,6 +108,6 @@ public class ParametersParser {
     }
 
     public AESInput toAESInput() {
-        return new AESInput(inputFilePath, outputFilePath, keyBytes, operation, aesMode, initVector);
+        return new AESInput(inputFilePath, outputFilePath, keyBytes, operation, aesMode, initVector, verbose);
     }
 }

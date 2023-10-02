@@ -20,8 +20,10 @@ public class Padding {
     }
 
     public static byte[] removePadding(byte[] data) {
-        byte len = data[data.length - 1];
-        byte[] result = new byte[data.length - len];
+        byte lastByte = data[data.length - 1];
+        byte tmpLen = (byte) (data.length - lastByte);
+        byte resultLength = (byte) (tmpLen < 0 ? 0 : tmpLen);
+        byte[] result = new byte[resultLength];
         System.arraycopy(data, 0, result, 0, result.length);
         return result;
     }

@@ -3,6 +3,7 @@ package com.alfanet.fileutils;
 import com.alfanet.aes.AESInput;
 import com.alfanet.aes.dataprocessor.AESDataProcessor;
 import com.alfanet.aes.dataprocessor.AESDataProcessorFactory;
+import com.alfanet.utils.Utils;
 import lombok.SneakyThrows;
 
 import java.io.*;
@@ -34,6 +35,7 @@ public class FileUtils {
 
     @SneakyThrows
     public static void processFileEncrypt(AESInput aesInput) throws IOException {
+        Utils.debugPrint(aesInput.isVerbose(), aesInput.toString());
         try (
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
@@ -69,6 +71,7 @@ public class FileUtils {
 
     @SneakyThrows
     public static void processFileDecrypt(AESInput aesInput) throws IOException {
+        Utils.debugPrint(aesInput.isVerbose(), aesInput.toString());
         try (
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);

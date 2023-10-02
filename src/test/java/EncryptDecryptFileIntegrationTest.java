@@ -30,7 +30,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void encryptFileTestECB_128() {
 
         AESInput input = new AESInput("./src/test/resources/inputtest", outputFilePath, key128,
-                CipherOperation.ENCRYPTION, AESMode.ECB, new byte[0]);
+                CipherOperation.ENCRYPTION, AESMode.ECB, new byte[0], true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -55,7 +55,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestECB_128() {
 
         AESInput input = new AESInput("./src/test/resources/ecb_16_encrypted", outputFilePath, key128,
-                CipherOperation.DECRYPTION, AESMode.ECB, new byte[0]);
+                CipherOperation.DECRYPTION, AESMode.ECB, new byte[0], true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -79,7 +79,7 @@ public class EncryptDecryptFileIntegrationTest {
     @Test
     public void encryptFileTestCBC_128() {
         AESInput input = new AESInput("./src/test/resources/inputtest", outputFilePath, key128,
-                CipherOperation.ENCRYPTION, AESMode.CBC, initVector);
+                CipherOperation.ENCRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -104,7 +104,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestCBC_128() {
 
         AESInput input = new AESInput("./src/test/resources/cbc_16_encrypted", outputFilePath, key128,
-                CipherOperation.DECRYPTION, AESMode.CBC, initVector);
+                CipherOperation.DECRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -128,7 +128,7 @@ public class EncryptDecryptFileIntegrationTest {
     @Test
     public void encryptFileTestCBC_LARGE_128() {
         AESInput input = new AESInput("./src/test/resources/input_large", outputFilePath, key128,
-                CipherOperation.ENCRYPTION, AESMode.CBC, initVector);
+                CipherOperation.ENCRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -152,7 +152,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestCBC_LARGE_128() {
 
         AESInput input = new AESInput("./src/test/resources/large_cbc_16_encrypted", outputFilePath, key128,
-                CipherOperation.DECRYPTION, AESMode.CBC, initVector);
+                CipherOperation.DECRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -177,7 +177,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void encryptFileTestECB_LARGE_128() {
 
         AESInput input = new AESInput("./src/test/resources/input_large", outputFilePath, key128,
-                CipherOperation.ENCRYPTION, AESMode.ECB, initVector);
+                CipherOperation.ENCRYPTION, AESMode.ECB, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -200,7 +200,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestECB_LARGE_128() {
 
         AESInput input = new AESInput("./src/test/resources/large_ecb_16_encrypted", outputFilePath, key128,
-                CipherOperation.DECRYPTION, AESMode.ECB, initVector);
+                CipherOperation.DECRYPTION, AESMode.ECB, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -226,7 +226,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void encryptFileTestECB_192() {
 
         AESInput input = new AESInput("./src/test/resources/inputtest", outputFilePath, key192,
-                CipherOperation.ENCRYPTION, AESMode.ECB, new byte[0]);
+                CipherOperation.ENCRYPTION, AESMode.ECB, new byte[0], true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -251,7 +251,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestECB_192() {
 
         AESInput input = new AESInput("./src/test/resources/ecb_24_encrypted", outputFilePath, key192,
-                CipherOperation.DECRYPTION, AESMode.ECB, new byte[0]);
+                CipherOperation.DECRYPTION, AESMode.ECB, new byte[0], true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -275,7 +275,7 @@ public class EncryptDecryptFileIntegrationTest {
     @Test
     public void encryptFileTestCBC_192() {
         AESInput input = new AESInput("./src/test/resources/inputtest", outputFilePath, key192,
-                CipherOperation.ENCRYPTION, AESMode.CBC, initVector);
+                CipherOperation.ENCRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -300,7 +300,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestCBC_192() {
 
         AESInput input = new AESInput("./src/test/resources/cbc_24_encrypted", outputFilePath, key192,
-                CipherOperation.DECRYPTION, AESMode.CBC, initVector);
+                CipherOperation.DECRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -324,7 +324,7 @@ public class EncryptDecryptFileIntegrationTest {
     @Test
     public void encryptFileTestCBC_LARGE_192() {
         AESInput input = new AESInput("./src/test/resources/input_large", outputFilePath, key192,
-                CipherOperation.ENCRYPTION, AESMode.CBC, initVector);
+                CipherOperation.ENCRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -348,7 +348,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestCBC_LARGE_192() {
 
         AESInput input = new AESInput("./src/test/resources/large_cbc_24_encrypted", outputFilePath, key192,
-                CipherOperation.DECRYPTION, AESMode.CBC, initVector);
+                CipherOperation.DECRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -373,7 +373,7 @@ public class EncryptDecryptFileIntegrationTest {
     @Test
     public void encryptFileTestCBC_LARGE_256() {
         AESInput input = new AESInput("./src/test/resources/input_large", outputFilePath, key256,
-                CipherOperation.ENCRYPTION, AESMode.CBC, initVector);
+                CipherOperation.ENCRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileEncrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
@@ -397,7 +397,7 @@ public class EncryptDecryptFileIntegrationTest {
     public void decryptFileTestCBC_LARGE_256() {
 
         AESInput input = new AESInput("./src/test/resources/large_cbc_32_encrypted", outputFilePath, key256,
-                CipherOperation.DECRYPTION, AESMode.CBC, initVector);
+                CipherOperation.DECRYPTION, AESMode.CBC, initVector, true);
         try {
             FileUtils.processFileDecrypt(input);
             Assertions.assertTrue(Paths.get(outputFilePath).toFile().exists());
