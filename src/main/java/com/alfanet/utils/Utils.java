@@ -24,11 +24,11 @@ public class Utils {
     }
 
     public static String bytesToString(byte[] bytes) {
-        String result = "";
-        for (int i = 0; i < bytes.length; i++) {
-            result += String.format("%02x", bytes[i]);
+        StringBuilder result = new StringBuilder();
+        for (byte aByte : bytes) {
+            result.append(String.format("%02x", aByte));
         }
-        return result;
+        return result.toString();
     }
 
     public static byte[] intToBytes(int input) {
@@ -39,10 +39,10 @@ public class Utils {
     }
 
     public static void printMultiBytes(byte[][] bytes) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                result += String.format("%02x", bytes[j][i]);
+                result.append(String.format("%02x", bytes[j][i]));
             }
         }
         System.out.println(result);

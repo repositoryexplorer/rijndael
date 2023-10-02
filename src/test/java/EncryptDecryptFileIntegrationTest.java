@@ -22,7 +22,7 @@ public class EncryptDecryptFileIntegrationTest {
     String outputFilePath = "./src/test/resources/outputtest";
 
     @BeforeEach
-    private void beforeEach() {
+    public void beforeEach() {
         Paths.get(outputFilePath).toFile().delete();
     }
 

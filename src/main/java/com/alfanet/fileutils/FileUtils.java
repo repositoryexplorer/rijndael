@@ -13,8 +13,7 @@ import static com.alfanet.aes.AesUtils.AES_BLOCK_SIZE;
 public class FileUtils {
     public static byte[] readKey(String keyFilePath) throws IOException, KeyLengthException {
         try (FileInputStream inStream = new FileInputStream(keyFilePath)) {
-            byte[] keyBytes = readKeyBytes(inStream);
-            return keyBytes;
+            return readKeyBytes(inStream);
         }
     }
 
@@ -40,7 +39,7 @@ public class FileUtils {
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
                 FileOutputStream outputStream = new FileOutputStream(aesInput.getOutputFilePath());
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)
         ) {
             AESDataProcessor dataProcessor = AESDataProcessorFactory.createDataProcessor(aesInput);
             byte[] bytes = new byte[AES_BLOCK_SIZE];
@@ -76,7 +75,7 @@ public class FileUtils {
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
                 FileOutputStream outputStream = new FileOutputStream(aesInput.getOutputFilePath());
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)
         ) {
             AESDataProcessor dataProcessor = AESDataProcessorFactory.createDataProcessor(aesInput);
             byte[] bytes = new byte[AES_BLOCK_SIZE];
