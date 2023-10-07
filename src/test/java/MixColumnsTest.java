@@ -6,25 +6,25 @@ public class MixColumnsTest {
 
     @Test
     public void testPolynomialsMultiplication1() {
-        byte[] poly1 = {3, 2, 0}; // 13 = 8 + 4 + 1
-        byte[] poly2 = {1, 0}; // 3 = 2 + 1
-        byte result = MixColumns.multiplePolyToByte(poly1, poly2);
+        byte[] poly1 = {1, 0, 1, 1}; // 13 = 8 + 4 + 1
+        byte[] poly2 = {1, 1}; // 3 = 2 + 1
+        byte result = MixColumns.multiplyPolynomial(poly1, poly2);
         Assertions.assertEquals(23, result);
     }
 
     @Test
     public void testPolynomialsMultiplication2() {
-        byte[] poly1 = {7, 2, 0}; // 133 = 128 + 4 + 1
-        byte[] poly2 = {2, 1, 0}; // 7 = 4 + 2 + 1
-        byte result = MixColumns.multiplePolyToByte(poly1, poly2);
+        byte[] poly1 = {1, 0, 1, 0, 0, 0, 0, 1}; // 133 = 128 + 4 + 1
+        byte[] poly2 = {1, 1, 1}; // 7 = 4 + 2 + 1
+        byte result = MixColumns.multiplyPolynomial(poly1, poly2);
         Assertions.assertEquals(182, result & 0xFF);
     }
 
     @Test
     public void testPolynomialsMultiplication3() {
-        byte[] poly1 = {3, 2, 0}; // 13 = 4 + 1
-        byte[] poly2 = {3, 2, 0}; // 13 = 4 + 1
-        byte result = MixColumns.multiplePolyToByte(poly1, poly2);
+        byte[] poly1 = {1, 0, 1, 1}; // 13 = 4 + 1
+        byte[] poly2 = {1, 0, 1, 1}; // 13 = 4 + 1
+        byte result = MixColumns.multiplyPolynomial(poly1, poly2);
         Assertions.assertEquals(81, result & 0xFF);
     }
 
@@ -95,8 +95,4 @@ public class MixColumnsTest {
         byte[][] result = MixColumns.invMixColumns(state);
         Assertions.assertArrayEquals(expected, result);
     }
-
-//    54d990a1 6ba09ab5 96bbf40e a111702f
-    //e9f74eec023020f61bf2ccf2353c21c7
-    //round[ 2].istart 54d990a16ba09ab596bbf40ea111702f
 }

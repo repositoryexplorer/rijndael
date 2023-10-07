@@ -11,6 +11,9 @@ import java.io.*;
 import static com.alfanet.aes.AesUtils.AES_BLOCK_SIZE;
 
 public class FileUtils {
+
+    private static final int BUFFER_SIZE = 64 * 1024;
+
     public static byte[] readKey(String keyFilePath) throws IOException, KeyLengthException {
         try (FileInputStream inStream = new FileInputStream(keyFilePath)) {
             return readKeyBytes(inStream);
@@ -37,9 +40,9 @@ public class FileUtils {
         Utils.debugPrint(aesInput.isVerbose(), aesInput.toString());
         try (
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, BUFFER_SIZE);
                 FileOutputStream outputStream = new FileOutputStream(aesInput.getOutputFilePath());
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, BUFFER_SIZE)
         ) {
             AESDataProcessor dataProcessor = AESDataProcessorFactory.createDataProcessor(aesInput);
             byte[] bytes = new byte[AES_BLOCK_SIZE];
@@ -73,9 +76,9 @@ public class FileUtils {
         Utils.debugPrint(aesInput.isVerbose(), aesInput.toString());
         try (
                 FileInputStream inputStream = new FileInputStream(aesInput.getInputFilePath());
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, BUFFER_SIZE);
                 FileOutputStream outputStream = new FileOutputStream(aesInput.getOutputFilePath());
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, BUFFER_SIZE)
         ) {
             AESDataProcessor dataProcessor = AESDataProcessorFactory.createDataProcessor(aesInput);
             byte[] bytes = new byte[AES_BLOCK_SIZE];

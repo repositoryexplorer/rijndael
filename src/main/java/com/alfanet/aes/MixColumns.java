@@ -1,16 +1,22 @@
 package com.alfanet.aes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static com.alfanet.aes.AesUtils.StateWords;
 
 public class MixColumns {
 
-    private static final List<Byte> irreduciblePoly = Arrays.asList(new Byte[]{4, 3, 1, 0});
+    private static final Map<Byte, byte[]> powersOf2Map = new HashMap<>();
+    private static final byte[] poly14 = {0, 1, 1, 1};// {14}
+    private static final byte[] poly13 = {1, 0, 1, 1}; //{13}
+    private static final byte[] poly11 = {1, 1, 0, 1};// {11}
+    private static final byte[] poly9 = {1, 0, 0, 1}; //{09}
+    private static final byte[] poly3 = {1, 1};// {03}
+    private static final byte[] poly2 = {0, 1}; // {02}
+
+    private static final byte[] irreduciblePolyBA = {1, 1, 0, 1, 1};
 
     public static byte[][] mixColumns(byte[][] state) {
         byte[][] result = new byte[4][StateWords];
@@ -25,108 +31,95 @@ public class MixColumns {
     }
 
     private static byte calculateRow3Value(byte[] colBytes) {
-        byte[] poly3 = {1, 0};// {03}
-        byte b1 = multiplePolyToByte(poly3, getPowersOf2((byte) colBytes[0]));
+        byte b1 = multiplyPolynomial(poly3, getPowersOf2(colBytes[0]));
         byte b2 = colBytes[1];
         byte b3 = colBytes[2];
-        byte[] poly2 = {1};// {02}
-        byte b4 = multiplePolyToByte(poly2, getPowersOf2((byte) colBytes[3]));
+        byte b4 = multiplyPolynomial(poly2, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     private static byte calculateRow2Value(byte[] colBytes) {
         byte b1 = colBytes[0];
         byte b2 = colBytes[1];
-        byte[] poly2 = {1};// {02}
-        byte b3 = multiplePolyToByte(poly2, getPowersOf2((byte) colBytes[2]));
-        byte[] poly3 = {1, 0};// {03}
-        byte b4 = multiplePolyToByte(poly3, getPowersOf2((byte) colBytes[3]));
+        byte b3 = multiplyPolynomial(poly2, getPowersOf2(colBytes[2]));
+        byte b4 = multiplyPolynomial(poly3, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     private static byte calculateRow1Value(byte[] colBytes) {
         byte b1 = colBytes[0];
-        byte[] poly2 = {1};// {02}
-        byte b2 = multiplePolyToByte(poly2, getPowersOf2((byte) colBytes[1]));
-        byte[] poly3 = {1, 0};// {03}
-        byte b3 = multiplePolyToByte(poly3, getPowersOf2((byte) colBytes[2]));
+        byte b2 = multiplyPolynomial(poly2, getPowersOf2(colBytes[1]));
+        byte b3 = multiplyPolynomial(poly3, getPowersOf2(colBytes[2]));
         byte b4 = colBytes[3];
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     public static byte calculateRow0Value(byte[] colBytes) {
-        byte[] poly2 = {1}; // {02}
-        byte b1 = multiplePolyToByte(poly2, getPowersOf2((byte) (0xFF & colBytes[0])));
-        byte[] poly3 = {1, 0};// {03}
-        byte b2 = multiplePolyToByte(poly3, getPowersOf2((byte) (0xff & colBytes[1])));
+        byte b1 = multiplyPolynomial(poly2, getPowersOf2((byte) (colBytes[0])));
+        byte b2 = multiplyPolynomial(poly3, getPowersOf2((byte) (colBytes[1])));
         byte b3 = colBytes[2];
         byte b4 = colBytes[3];
         byte result = (byte) (b1 ^ b2 ^ b3 ^ b4);
         return result;
     }
 
-    public static byte multiplePolyToByte(byte[] poly1, byte[] poly2) {
-        List<Byte> polynomial = multiplyPoly(toListOfByte(poly1), toListOfByte(poly2));
-        return reducePoly(polynomial);
+
+    private static String getKey(byte[] a1, byte[] a2) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < a1.length; i++) {
+            s.append(a1[i]);
+        }
+        for (int i = 0; i < a1.length; i++) {
+            s.append(a2[i]);
+        }
+        return s.toString();
     }
 
-    private static byte reducePoly(List<Byte> poly) {
-        List<Byte> result = new ArrayList<>();
-        List<Byte> sorted = poly.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-        int index = 0;
-        while (index < sorted.size()) {
-            byte current = sorted.get(index++);
-            if (index < sorted.size()) {
-                if (sorted.get(index) == current) { //next equals current
-                    index++;
-                } else {
-                    result.add(current);
-                }
-            } else {
-                result.add(current);
+    private static final Map<String, Byte> map = new HashMap<>();
+
+    public static byte multiplyPolynomial(byte[] poly1, byte[] poly2) {
+        String key = getKey(poly1, poly2);
+        Byte fromCache = map.get(key);
+        if (fromCache != null) return fromCache;
+
+        byte result = 0;
+        byte[] bytes = multiplyPoly(poly1, poly2);
+        for (int i = 0; i < bytes.length; i++) {
+            byte tmp = bytes[i];
+            if (tmp > 0 && tmp % 2 > 0) {
+                result += 1 << i;
             }
         }
-        return powOf2ToByte(result);
-    }
-
-    private static List<Byte> toListOfByte(byte[] poly2) {
-        List<Byte> result = new ArrayList<>();
-        for (int i = 0; i < poly2.length; i++) {
-            result.add(poly2[i]);
-        }
+        map.put(key, result);
         return result;
     }
 
-    private static byte powOf2ToByte(List<Byte> powersOf2) {
-        byte result = 0;
-        for (int i = 0; i < powersOf2.size(); i++) {
-            result += Math.pow(2, powersOf2.get(i));
-        }
-        return result;
-    }
-
-    private static List<Byte> multiplyPoly(List<Byte> poly1, List<Byte> poly2) {
-        List<Byte> resultPoly = new ArrayList<>();
-        if (poly1.size() != 0 && poly2.size() != 0) {
-            for (int i = 0; i < poly1.size(); i++) {
-                for (int j = 0; j < poly2.size(); j++) {
-                    byte poly = (byte) (poly1.get(i) + poly2.get(j));
+    private static byte[] multiplyPoly(byte[] poly1, byte[] poly2) {
+        byte[] resultPoly = new byte[20];
+        if (poly1.length != 0 && poly2.length != 0) {
+            for (int i = 0; i < poly1.length; i++) {
+                for (int j = 0; j < poly2.length; j++) {
+                    if (poly1[i] == 0 || poly2[j] == 0) {
+                        continue;
+                    }
+                    byte poly = (byte) (i + j);// (byte) (poly1[i] + poly2[j]);
                     if (poly >= 8) {
 
-                        List<Byte> polyRest = new ArrayList<>();
+                        byte[] polyRest = new byte[20];
                         byte rest = (byte) (poly % 8);
-                        polyRest.add((byte) (rest));
-                        List<Byte> tmpPolyBytes;
+                        polyRest[rest] = 1;
+                        byte[] tmpPolyBytes;
                         if (rest > 0) {
-                            tmpPolyBytes = multiplyPoly(irreduciblePoly, polyRest);
+                            tmpPolyBytes = multiplyPoly(irreduciblePolyBA, polyRest);
                         } else {
-                            tmpPolyBytes = new ArrayList<>();
-                            tmpPolyBytes.addAll(irreduciblePoly);
+                            tmpPolyBytes = new byte[5];
+                            System.arraycopy(irreduciblePolyBA, 0, tmpPolyBytes, 0, 5);
                         }
-
-                        resultPoly.addAll(tmpPolyBytes);
+                        for (int k = 0; k < tmpPolyBytes.length; k++) {
+                            resultPoly[k] += tmpPolyBytes[k];
+                        }
                     } else {
-                        resultPoly.add(poly);
+                        resultPoly[i + j] += 1;
                     }
                 }
             }
@@ -146,17 +139,17 @@ public class MixColumns {
     }
 
     public static byte[] getPowersOf2(byte value) {
-        List<Byte> powOf2 = new ArrayList<>();
-        int tmp = 128;
-        for (int i = 7; i >= 0; i--) {
-            if ((value & tmp) == tmp) {
-                powOf2.add((byte) i);
+        byte[] result = powersOf2Map.get(value);
+        if (result == null) {
+            result = new byte[8];
+            int tmp = 128;
+            for (int i = 7; i >= 0; i--) {
+                if ((value & tmp) == tmp) {
+                    result[i] = 1;
+                }
+                tmp >>= 1;
             }
-            tmp >>= 1;
-        }
-        byte[] result = new byte[powOf2.size()];
-        for (int i = powOf2.size() - 1; i >= 0; i--) {
-            result[i] = powOf2.get(i);
+            powersOf2Map.put(value, result);
         }
         return result;
     }
@@ -174,50 +167,34 @@ public class MixColumns {
     }
 
     private static byte invCalculateRow3Value(byte[] colBytes) {
-        byte[] poly11 = {3, 1, 0};// {11}
-        byte b1 = multiplePolyToByte(poly11, getPowersOf2((byte) colBytes[0]));
-        byte[] poly13 = {3, 2, 0}; //{13}
-        byte b2 = multiplePolyToByte(poly13, getPowersOf2((byte) colBytes[1]));
-        byte[] poly9 = {3, 0}; //{09}
-        byte b3 = multiplePolyToByte(poly9, getPowersOf2((byte) colBytes[2]));
-        byte[] poly14 = {3, 2, 1};// {14}
-        byte b4 = multiplePolyToByte(poly14, getPowersOf2((byte) colBytes[3]));
+        byte b1 = multiplyPolynomial(poly11, getPowersOf2(colBytes[0]));
+        byte b2 = multiplyPolynomial(poly13, getPowersOf2(colBytes[1]));
+        byte b3 = multiplyPolynomial(poly9, getPowersOf2(colBytes[2]));
+        byte b4 = multiplyPolynomial(poly14, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     private static byte invCalculateRow2Value(byte[] colBytes) {
-        byte[] poly13 = {3, 2, 0}; //{13}
-        byte b1 = multiplePolyToByte(poly13, getPowersOf2((byte) colBytes[0]));
-        byte[] poly9 = {3, 0}; //{09}
-        byte b2 = multiplePolyToByte(poly9, getPowersOf2((byte) colBytes[1]));
-        byte[] poly14 = {3, 2, 1};// {14}
-        byte b3 = multiplePolyToByte(poly14, getPowersOf2((byte) colBytes[2]));
-        byte[] poly11 = {3, 1, 0};// {11}
-        byte b4 = multiplePolyToByte(poly11, getPowersOf2((byte) colBytes[3]));
+        byte b1 = multiplyPolynomial(poly13, getPowersOf2(colBytes[0]));
+        byte b2 = multiplyPolynomial(poly9, getPowersOf2(colBytes[1]));
+        byte b3 = multiplyPolynomial(poly14, getPowersOf2(colBytes[2]));
+        byte b4 = multiplyPolynomial(poly11, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     private static byte invCalculateRow1Value(byte[] colBytes) {
-        byte[] poly9 = {3, 0}; //{09}
-        byte b1 = multiplePolyToByte(poly9, getPowersOf2((byte) colBytes[0]));
-        byte[] poly14 = {3, 2, 1};// {14}
-        byte b2 = multiplePolyToByte(poly14, getPowersOf2((byte) colBytes[1]));
-        byte[] poly11 = {3, 1, 0};// {11}
-        byte b3 = multiplePolyToByte(poly11, getPowersOf2((byte) colBytes[2]));
-        byte[] poly13 = {3, 2, 0}; //{13}
-        byte b4 = multiplePolyToByte(poly13, getPowersOf2((byte) colBytes[3]));
+        byte b1 = multiplyPolynomial(poly9, getPowersOf2(colBytes[0]));
+        byte b2 = multiplyPolynomial(poly14, getPowersOf2(colBytes[1]));
+        byte b3 = multiplyPolynomial(poly11, getPowersOf2(colBytes[2]));
+        byte b4 = multiplyPolynomial(poly13, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 
     public static byte invCalculateRow0Value(byte[] colBytes) {
-        byte[] poly14 = {3, 2, 1};// {14}
-        byte b1 = multiplePolyToByte(poly14, getPowersOf2((byte) colBytes[0]));
-        byte[] poly11 = {3, 1, 0};// {11}
-        byte b2 = multiplePolyToByte(poly11, getPowersOf2((byte) colBytes[1]));
-        byte[] poly13 = {3, 2, 0}; //{13}
-        byte b3 = multiplePolyToByte(poly13, getPowersOf2((byte) colBytes[2]));
-        byte[] poly9 = {3, 0}; //{09}
-        byte b4 = multiplePolyToByte(poly9, getPowersOf2((byte) colBytes[3]));
+        byte b1 = multiplyPolynomial(poly14, getPowersOf2(colBytes[0]));
+        byte b2 = multiplyPolynomial(poly11, getPowersOf2(colBytes[1]));
+        byte b3 = multiplyPolynomial(poly13, getPowersOf2(colBytes[2]));
+        byte b4 = multiplyPolynomial(poly9, getPowersOf2(colBytes[3]));
         return (byte) (b1 ^ b2 ^ b3 ^ b4);
     }
 }
