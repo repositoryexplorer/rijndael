@@ -17,6 +17,7 @@ It uses PKCS#7 padding for blocks smaller than 16 bytes
 ## Examples
 
 java -jar rijndael.jar --k=key --i=inputfile --m=ecb --o=outputfile
+
 java -jar rijndael.jar --k=key --i=encryptedfile --m=cbc --d --o=outputfile --iv=000102030405060708090a0b0c0d0e0f
    
 ## License
