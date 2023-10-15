@@ -100,7 +100,6 @@ public class ParametersParser {
         System.out.println(" --m      mode, ECB or CBC");
         System.out.println(" --o      output file");
         System.out.println(" --iv     16 bytes length initialization vector (only for CBC mode). This must be string containing only hexadecimal values. ");
-        System.out.println(" --v      verbose mode");
         System.out.println("\n");
         System.out.println("Example usage");
         System.out.println(" java -jar rijndael.jar --k=key --i=inputfile --m=ecb --o=outputfile");
